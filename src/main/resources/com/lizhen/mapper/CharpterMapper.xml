@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.lizhen.dao.CharpterDAO">
+    <sql id="publicsql">
+      id, url, size, duration, up_date, album_Id
+    </sql>
+
+    <resultMap id="Charpter" type="Charpter">
+        <id property="id" column="cid"/>
+        <result property="url" column="url"/>
+        <result property="size" column="size"/>
+        <result property="duration" column="duration"/>
+        <result property="up_date" column="up_date"/>
+        <result property="album_Id" column="album_Id"/>
+        <association property="album" javaType="Album">
+            <id column="aid" property="id"/>
+            <result column="title" property="title"/>
+            <result property="author" column="author"/>
+            <result property="score" column="score"/>
+            <result property="cover_img" column="cover_img"/>
+            <result property="broadcast" column="broadcast"/>
+            <result property="counts" column="counts"/>
+            <result property="content" column="content"/>
+            <result property="pub_date" column="pub_date"/>
+        </association>
+    </resultMap>
+    <select id="showCharpterByPage" resultMap="Charpter">
+        select  c.id cid,c.url,c.size,c.duration,c.up_date,c.album_Id,
+        a.id aid,a.title,a.score,a.cover_img,a.broadcast,a.counts,a.content,a.pub_date
+        from  charpter c  inner join  album a
+        on  c.album_Id = a.id  where album_Id =#{album_Id}  limit  ${(page-1)*rows},#{rows}
+    </select>
+
+    <select id="totalCount" resultType="int">
+        select  count(*) from  charpter
+    </select>
+
+    <update id="editCharpter" parameterType="Charpter">
+        update charpter
+        <set>
+            <if test="url!=null">
+                url=#{url},
+            </if>
+            <if test="size!=null">
+                size=#{size},
+            </if>
+            <if test="duration!=null">
+                duration=#{duration},
+            </if>
+            <if test="up_date!=null">
+                up_date=#{up_date},
+            </if>
+            <if test="album_Id!=null">
+                album_Id=#{album_Id}
+             </if>
+        </set>
+        where id=#{id}
+    </update>
+        <insert id="saveCharpter" parameterType="Charpter">
+            insert into charpter (<include refid="publicsql"></include> ) values (#{id}, #{url}, #{size},
+            #{duration}, #{up_date}, #{album_Id})
+        </insert>
+
+    <delete id="deleteCharpter" parameterType="Charpter">
+        delete from charpter where id=#{id}
+    </delete>
+
+
+</mapper>

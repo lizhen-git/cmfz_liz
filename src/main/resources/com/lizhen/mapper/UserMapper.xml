@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.lizhen.dao.UserDAO">
+    
+    <sql id="publicsql">
+        id, phone, password, salt, pic_img, ahama, name, sex, city, sign, status, reg_date, guruId,month
+    </sql>
+
+    <select id="showUserByPage" resultType="User">
+        select <include refid="publicsql"></include> from user limit #{start},#{rows}
+    </select>
+
+    <select id="totalCount" resultType="java.lang.Integer">
+        select count(*) from user
+    </select>
+
+    <update id="update" parameterType="User">
+        update user
+        <set>
+            <if test="pic_img!=null">
+                pic_img=#{pic_img}
+            </if>
+            <if test="status!=null">
+                status=#{status}
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <select id="selectAllUser" resultType="User">
+        select id, phone, password, pic_img, ahama, name, sex, city, sign, status, reg_date from user
+    </select>
+
+    <insert id="addUser" parameterType="User">
+        insert into user(<include refid="publicsql"></include>) values (#{id}, #{phone}, #{password}, #{salt},
+        #{pic_img}, #{ahama}, #{name}, #{sex}, #{city}, #{sign}, #{status}, #{reg_date}, #{guruId},#{month})
+    </insert>
+
+
+    <!--查询男用户分布-->
+    <select id="selectUserByCityAndBoy" resultType="City">
+        select city as name ,count(*) as value from user where sex = '男'group by city
+    </select>
+
+    <!--查询女用户分布-->
+    <select id="selectUserByCityAndGirl" resultType="City">
+        select city as name ,count(*) as value from user where sex = '女'group by city
+    </select>
+
+    <!--统计男注册月份分布-->
+    <select id="selectUserByDateAndBoy" resultType="City">
+        select month as name ,count(*) as value from user where sex = '男'group by month
+    </select>
+
+    <!--统计女注册月份分布-->
+    <select id="selectUserByDateAnd" resultType="City">
+        select month as name ,count(*) as value from user where sex = '女'group by month
+    </select>
+</mapper>

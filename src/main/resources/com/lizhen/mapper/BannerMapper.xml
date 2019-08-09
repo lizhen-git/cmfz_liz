@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.lizhen.dao.BannerDAO">
+
+    <sql id="publicsql" >
+        id,title,imgpath,description,status,updates
+    </sql>
+
+<select id="selectByPage" resultType="Banner">
+     select <include refid="publicsql" ></include>  from banner  limit  ${(page-1)*rows},#{rows}
+</select>
+    <select id="totalCount" resultType="java.lang.Integer">
+       select count(*) from banner
+   </select>
+
+    <delete id="deleteBanner" parameterType="java.lang.String">
+        delete from banner where id=#{id}
+    </delete>
+
+
+    <insert id="addBanner" parameterType="Banner">
+        insert into banner(<include refid="publicsql"></include> ) values (#{id},#{title},#{imgpath},
+        #{description},#{status},#{updates})
+    </insert>
+
+    <update id="eduitBanner" parameterType="Banner">
+        update banner
+        <set>
+            <if test="title!=null">
+                title=#{title},
+            </if>
+            <if test="imgpath!=null">
+                <if test="imgpath != ''">
+                imgpath=#{imgpath},
+            </if>
+
+            </if>
+            <if test="description!=null">
+                description=#{description},
+            </if>
+            <if test="status!=null">
+                status=#{status},
+            </if>
+            <if test="updates!=null">
+                updates=#{updates}
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+    </mapper>

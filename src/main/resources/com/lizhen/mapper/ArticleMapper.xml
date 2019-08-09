@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.lizhen.dao.ArticleDAO">
+
+    <sql id="publicsql">
+        id , title, insert_img, content, up_date, guruId,status
+    </sql>
+    <select id="showArticleByPage" resultType="Article">
+        select <include refid="publicsql"></include> from article limit #{start},#{rows}
+    </select>
+
+    <select id="totalCount" resultType="java.lang.Integer">
+        select count(*) from article
+    </select>
+
+    <update id="update" parameterType="Article">
+        update article
+        <set>
+            <if test="title!=null">
+                title=#{title},
+            </if>
+            <if test="insert_img!=null">
+                insert_img=#{insert_img},
+            </if>
+            <if test="up_date!=null">
+                up_date=#{up_date},
+            </if>
+            <if test="guruId!=null">
+                guruId=#{guruId},
+            </if>
+
+            <if test="content!=null">
+                content=#{content},
+            </if>
+            <if test="status!=null">
+                status=#{status}
+            </if>
+      </set>
+        where id=#{id}
+    </update>
+    
+    
+    <insert id="saveArticle" parameterType="Article">
+        insert into article (<include refid="publicsql"></include> ) values (#{id} , #{title}, #{insert_img}, #{content},
+        #{up_date}, #{guruId},#{status});
+    </insert>
+
+
+    <delete id="deleteArticle" parameterType="java.lang.String"  >
+        delete from article where id= #{id}
+    </delete>
+</mapper>
